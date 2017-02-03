@@ -11,7 +11,9 @@ namespace Messages
     {
         Messagetype _type;
         public OpenConMsg()
-        {}
+        {
+            _type = Messagetype.OPENCON;
+        }
         public override AbstractMessage.Messagetype getMessageType()
         {
             return _type;

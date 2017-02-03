@@ -6,17 +6,18 @@ using System.Threading.Tasks;
 
 namespace Messages
 {
+    public enum repeatIntervall
+    {
+        NONE = 0,
+        HOUR,
+        DAY,
+        MONTH,
+        YEAR
+    }
     [Serializable]
     public class PostTaskMsg:AbstractMessage
     {
-        public enum repeatIntervall
-        {
-            NONE = 0,
-            HOUR,
-            DAY,
-            MONTH,
-            YEAR
-        }
+        
         int _updateID;
         Messagetype _type;
         DateTime _timeOfTask;

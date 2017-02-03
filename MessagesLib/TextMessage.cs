@@ -6,14 +6,16 @@ using System.Threading.Tasks;
 
 namespace Messages
 {
+    [Serializable]
     public class TextMessage:AbstractMessage
     {
         string _textMessage;
         int i;
         Messagetype _type;
-        public TextMessage()
+        public TextMessage(string text)
         {
             _type = Messagetype.TEXT;
+            _textMessage = text;
         }
         public string getText()
         {
