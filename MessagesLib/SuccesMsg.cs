@@ -10,6 +10,11 @@ namespace Messages
     public class SuccesMsg:AbstractMessage
     {
         Messagetype _type;
+        ulong _answerToMessageWithId;
+        public SuccesMsg(ulong answerToID)
+        {
+            _answerToMessageWithId = answerToID;
+        }
         public override AbstractMessage.Messagetype getMessageType()
         {
             return _type;

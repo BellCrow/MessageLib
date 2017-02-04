@@ -16,10 +16,8 @@ namespace Messages
         #region Objects for handling messages
         Queue<AbstractMessage> _messageQueue;
         #endregion
-        bool _isServer;
         bool _working;
         TcpClient _connection;
-        int _port;
         NetworkStream _readWriteStream;
         Thread _receiverThread;
 
@@ -27,28 +25,15 @@ namespace Messages
         public delegate void ReceivedNewMessageEventHandler();
         public event ReceivedNewMessageEventHandler ReceivedMessageEvent;
         
-        //listener Object and IP only for server
-        TcpListener _listener;
-        string _ip;
+
         #region Constructors
         //constructor for the server part
-        public MessageCommunicator(int port)
+        public MessageCommunicator(TcpClient connection)
         {
-
-            _port = port;
-            _listener = new TcpListener(_port);
-            _isServer = true;
+            _connection = connection;
+            _readWriteStream = _connection.GetStream();
             initObjects();
         }
-        //constructor for client
-        public MessageCommunicator(string ip,int port)
-        {
-            _port = port;
-            _ip = ip;
-            _isServer = false;
-            initObjects();
-        }
-
         private void initObjects()
         {
             _messageQueue = new Queue<AbstractMessage>();
@@ -57,27 +42,12 @@ namespace Messages
         }
         #endregion
 
-        #region connect client and server methods
-        public void connectToServer()
+        #region connectionAbstraction
+        public void closeConnectionForce()
         {
-            if (_isServer)
-                throw new MessageCommunicatorException("Tried to connect to server from server");
-            //create new tcpclient and automatically connect to the server
-            _connection = new TcpClient(_ip, _port);
-            if(!_connection.Connected)
-                throw new MessageCommunicatorException("Could not connect to Remotehost");
-            _readWriteStream = _connection.GetStream();
-        }
-        public void listenForClient()
-        {
-            if (!_isServer)
-                throw new MessageCommunicatorException("Tried to listen on a client");
-            _listener.Start();
-            _connection = _listener.AcceptTcpClient();
-            _readWriteStream = _connection.GetStream();
+            _connection.Close();
         }
         #endregion
-
         #region communication with messages
         public void sendMessage(AbstractMessage sMessage)
         {
@@ -134,12 +104,17 @@ namespace Messages
                 if (receiveMessage() && ReceivedMessageEvent != null)
                     ReceivedMessageEvent();
             }
+            sendMessage(new CloseConMsg());
+            while (_messageQueue.Count > 0)
+                Thread.Sleep(1000);
+            _connection.Close();
         }
         public bool isWorking()
         {
             return _working;
         }
         #endregion
+    
     }
     
 }

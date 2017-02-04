@@ -28,6 +28,7 @@ namespace Messages
         {
             _updateID = updateID;
             _type = Messagetype.POSTTASK;
+            _timeOfTask = timeOfTask;
             _comment = comment;
             _repeatEveryX = repeatX;
             _rep = rep;

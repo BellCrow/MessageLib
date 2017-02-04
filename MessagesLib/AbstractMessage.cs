@@ -25,7 +25,16 @@ namespace Messages
             FAIL,
             TEXT
         };
-
+        static ulong IDcounter = 0;
+        ulong ID;
+        public AbstractMessage()
+        {
+            ID = IDcounter++;
+        }
+        public ulong getID()
+        {
+            return ID;
+        }
         public abstract Messagetype getMessageType();
         public static byte[] serializeMessage(AbstractMessage mes)
         {
@@ -39,11 +48,9 @@ namespace Messages
         }
         public static AbstractMessage deserializeMessage(byte[] messageAsByteArray)
         {
-
             AbstractMessage ret;
             MemoryStream memStream = new MemoryStream(messageAsByteArray);
             BinaryFormatter binForm = new BinaryFormatter();
-
             ret = (AbstractMessage)binForm.Deserialize(memStream);
             return ret;
         }
